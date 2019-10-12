@@ -1,0 +1,95 @@
+---
+- hosts: all
+  tasks:
+
+  - name: update all installed programs
+    become: yes
+    become_user: root
+    yum:
+      name: "*"
+      update_cache: yes
+      state: latest
+
+  - name: install programs necessary for remi repo
+    become: yes
+    become_user: root
+    yum:
+      name: "{{ item }}"
+      update_cache: yes
+      state: latest
+    with_items:
+      - epel-release
+      - yum-utils
+
+  - name: Import remi GPG key.
+    become: yes
+    become_user: root
+    rpm_key:
+      key: http://rpms.remirepo.net/RPM-GPG-KEY-remi
+
+  - name: fetch remi php repository
+    become: yes
+    become_user: root
+    yum:
+      name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+
+  - name: enable remi php repository
+    become: yes
+    become_user: root
+    shell: yum-config-manager --enable remi-php73
+
+  - name: install php7
+    become: yes
+    become_user: root
+    yum:
+      name: "{{ item }}"
+      update_cache: yes
+      state: latest
+      enablerepo: "remi-php73"
+    timeout: 120
+    with_items:
+      - php
+      - php-opcache
+      - php-mcrypt
+      - php-gd
+      - php-mysql
+      - php-ldap
+      - php-zip
+      - php-mbstring
+      - php-xml
+      - php-pear
+      - php-fpm
+
+  - name: install apache httpd
+    become: yes
+    become_user: root
+    yum:
+      name: httpd
+      update_cache: yes
+      state: latest
+    # notify:
+    #   - restart httpd
+
+  # - name: copy httpd config file
+  #   copy:
+  #     src: confs/httpd.conf
+  #     dest: /etc/httpd/conf.d/httpd.conf
+  #     owner: root
+  #     group: root
+  #     mode: "0644"
+
+  - name: start httpd
+    become: yes
+    become_user: root  
+    service:
+      name: httpd
+      enabled: yes
+      state: restarted
+
+  # handlers:
+  #   - name: restart httpd
+  #     become: yes
+  #     become_user: root
+  #     service: 
+  #       name: httpd
+  #       state: restarted
