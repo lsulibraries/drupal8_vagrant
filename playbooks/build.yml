@@ -4,7 +4,6 @@
 
   - name: update all installed programs
     become: yes
-    become_user: root
     yum:
       name: "*"
       update_cache: yes
@@ -12,7 +11,6 @@
 
   - name: install programs necessary for remi repo
     become: yes
-    become_user: root
     yum:
       name: "{{ item }}"
       update_cache: yes
@@ -23,24 +21,20 @@
 
   - name: Import remi GPG key.
     become: yes
-    become_user: root
     rpm_key:
       key: http://rpms.remirepo.net/RPM-GPG-KEY-remi
 
   - name: fetch remi php repository
     become: yes
-    become_user: root
     yum:
       name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
 
   - name: enable remi php repository
     become: yes
-    become_user: root
     shell: yum-config-manager --enable remi-php73
 
   - name: install php7
     become: yes
-    become_user: root
     yum:
       name: "{{ item }}"
       update_cache: yes
@@ -62,7 +56,6 @@
 
   - name: install apache httpd
     become: yes
-    become_user: root
     yum:
       name: httpd
       update_cache: yes
@@ -76,20 +69,11 @@
   #     dest: /etc/httpd/conf.d/httpd.conf
   #     owner: root
   #     group: root
-  #     mode: "0644"
+  # #     mode: "0644"
 
-  - name: start httpd
+  - name: start apache
     become: yes
-    become_user: root  
     service:
       name: httpd
       enabled: yes
-      state: restarted
-
-  # handlers:
-  #   - name: restart httpd
-  #     become: yes
-  #     become_user: root
-  #     service: 
-  #       name: httpd
-  #       state: restarted
+      state: started
