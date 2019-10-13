@@ -7,11 +7,9 @@ Vagrant.configure("2") do |config|
 
   config.vm.post_up_message = "Done. enjoy..."
 
-  # config.vm.synced_folder "synced/", "/outside/"
-
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "4096"
-    vb.cpus = 5
+    vb.memory = "2048"
+    vb.cpus = 2
   end
 
   require 'rbconfig'

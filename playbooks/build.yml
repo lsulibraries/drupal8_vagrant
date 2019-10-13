@@ -137,3 +137,6 @@
       name: httpd
       enabled: yes
       state: restarted
+
+  # - name: install a mariadb in the dev box
+  #   become: yes
