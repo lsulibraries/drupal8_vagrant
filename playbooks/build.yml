@@ -18,6 +18,7 @@
     with_items:
       - epel-release
       - yum-utils
+      - git
 
   - name: Import remi GPG key.
     become: yes
@@ -54,26 +55,85 @@
       - php-pear
       - php-fpm
 
+  - name: install composer pt1
+    command: php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    args:
+      chdir: /home/vagrant/
+
+  - name: install composer pt2
+    command: php composer-setup.php
+    args:
+      chdir: /home/vagrant/
+
+  - name: install composer pt3
+    become: yes
+    command: mv composer.phar /usr/bin/composer
+    args:
+      chdir: /home/vagrant/
+
+  - name: install composer pt4
+    command: php -r "unlink('composer-setup.php');"
+    args:
+      chdir: /home/vagrant/
+
+  - name: get drush executable
+    become: yes
+    get_url:
+      url: https://github.com/drush-ops/drush-launcher/releases/download/0.6.0/drush.phar
+      dest: /usr/bin/drush
+      mode: "0755"
+
+  - name: make drupal8
+    become: yes
+    command: composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html --stability dev --no-interaction --no-install
+
+  - name: inject our composer config file
+    become: yes
+    copy:
+      src: confs/drupal/drupal_composer.json
+      dest: /var/www/html/composer.json
+
+  - name: build our drupal8
+    become: yes
+    command: composer update
+    args:
+      chdir: /var/www/html
+
+  - name: set drupal files to apache user & SELinux specs
+    become: yes
+    file:
+      path: /var/www/html/web
+      state: directory
+      recurse: yes
+      owner: apache
+      group: apache
+
   - name: install apache httpd
     become: yes
     yum:
       name: httpd
-      update_cache: yes
       state: latest
-    # notify:
-    #   - restart httpd
 
-  # - name: copy httpd config file
-  #   copy:
-  #     src: confs/httpd.conf
-  #     dest: /etc/httpd/conf.d/httpd.conf
-  #     owner: root
-  #     group: root
-  # #     mode: "0644"
+  - name: inject our httpd config file
+    become: yes
+    copy:
+      src: confs/our_httpd.conf
+      dest: /etc/httpd/conf/httpd.conf
+      owner: root
+      group: root
+      mode: "0644"
+
+  - name: set SELinux permissions pt1
+    become: yes
+    command: chcon -R -t httpd_sys_content_rw_t /var/www/html/web/sites/
+
+  - name: set SELinux permissions pt2
+    become: yes
+    command: setsebool httpd_can_network_connect_db=on
 
   - name: start apache
     become: yes
     service:
       name: httpd
       enabled: yes
-      state: started
+      state: restarted
