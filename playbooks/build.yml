@@ -99,7 +99,7 @@
     args:
       chdir: /var/www/html
 
-  - name: set drupal files to apache user & SELinux specs
+  - name: set drupal files to apache:apache permissions
     become: yes
     file:
       path: /var/www/html/web
@@ -107,6 +107,22 @@
       recurse: yes
       owner: apache
       group: apache
+
+  - name: append our settings.php to settings.php
+    become: yes
+    blockinfile:
+      path: /var/www/html/web/sites/default/settings.php
+      block: "{{ lookup('file', 'confs/drupal/settings.php') }}"
+
+
+  # - name: replace php.ini with dev version
+  #   become: yes
+  #   copy:
+  #     src: confs/drupal/php.ini-development
+  #     dest: /usr/share/doc/php-common-7.3.10/php.ini
+  #     owner: root
+  #     group: root
+  #     mode: "0644"
 
   - name: install apache httpd
     become: yes
@@ -138,5 +154,32 @@
       enabled: yes
       state: restarted
 
-  # - name: install a mariadb in the dev box
-  #   become: yes
+  - name: make a hash salt
+    become: yes
+    shell: tr -d -c "a-zA-Z0-9" < /dev/urandom | head -c 75 > /var/www/html/drupal_salt.txt
+    args:
+      executable: /bin/bash
+      creates: /var/www/html/drupal_salt.txt
+
+  - name: set drual_salt to apache:apache permissions
+    become: yes
+    file:
+      path: /var/www/html/drupal_salt.txt
+      owner: apache
+      group: apache 
+
+
+  - name: install a MariaDB
+    become: yes
+    yum: 
+      name: mariadb-server
+      state: latest
+
+  - name: Start MariaDB Server and enable it
+    become: yes
+    service: 
+      name: mariadb
+      enabled: yes      
+      state: started
+
+
