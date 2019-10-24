@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: drupal8dev
   tasks:
 
   - name: update all installed programs

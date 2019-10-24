@@ -1,0 +1,10 @@
+---
+- hosts: drupal8prod
+  tasks:
+
+  - name: update all installed programs
+    become: yes
+    yum:
+      name: "*"
+      update_cache: yes
+      state: latest

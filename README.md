@@ -75,5 +75,55 @@ A vagrant box to match production
 
 # run one playbook against production:
     
-  - tbd
+USERNAME = you username on remote system
+REMOTE = ip address or domain name of the remote system
 
+
+# add your ssh public key to the remote server
+
+ - check if you already have a private & public key on your local machine.
+
+   - ```ls ~/.ssh/id_*```
+   - there may already be an "id_rsa" [private] and "id_rsa.pub" [public] keypair.
+   
+   - if not, create a new one:
+
+     - caveats -- creating a new keypair overwrites the old keypair.  
+     - ```ssh-keygen```
+     - confirm the files "id_rsa" and "id_rsa.pub" are in your ~/.ssh/ folder.
+
+ - send your public key to the remote server:
+    
+    (if you can ```ssh USERNAME@REMOTE```, then)
+    ```ssh-copy-id USERNAME@REMOTE```
+
+    you can check the remote machine's ~/.ssh/authorized_keys to see it matches your local ~/.ssh/id_rsa.pub
+
+ - this process has the cool effect of allowing ssh login to remote without password.
+
+
+# make ansible aware of the remote server
+
+ - add the following text to /etc/ansible/hosts
+
+```[drupal8dev]
+127.0.0.1 ansible_connection=local
+
+[drupal8prod]
+130.39.60.169   # libwebsitebackup001.lsu.edu```
+
+##
+
+ - check that your local ansible can connect to the remote server
+ - ```ansible all -m ping -u USERNAME```
+ - run a command on the remote computers
+ - ```ansible all -u USERNAME -a "/bin/echo hello"
+
+ 
+
+## run one playbook
+
+ - the "hosts" variable in the playbook.yaml names which group of servers listed in /etc/ansible/hosts to target
+ - if your username is different on remote and local, use -u USERNAME flag.
+ - if your playbook runs any commands as become sudo, you must add the --ask-become-pass flag.
+ ```ansible-playbook {path/name.yaml} -u USERNAME --ask-become-pass```
