@@ -90,7 +90,7 @@ REMOTE = ip address or domain name of the remote system
 
      - caveats -- creating a new keypair overwrites the old keypair.  
      - ```ssh-keygen```
-     - confirm the files "id_rsa" and "id_rsa.pub" are in your ~/.ssh/ folder.
+     - confirm the files "id_rsa" and "id_rsa.pub" are in your ```~/.ssh/``` folder.
 
  - send your public key to the remote server:
     
