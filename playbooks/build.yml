@@ -1,6 +1,25 @@
 ---
-- hosts: drupal8dev
+- hosts: all
   tasks:
+
+  - name: start firewalld
+    become: yes
+    shell: systemctl start firewalld.service
+
+  - name: open firewall to http
+    become: yes
+    firewalld:
+       service: http
+       state: enabled
+       permanent: yes
+
+  - name: open firewall to https
+    become: yes
+    firewalld:
+      service: https
+      immediate: yes
+      permanent: yes
+      state: enabled
 
   - name: update all installed programs
     become: yes
@@ -58,23 +77,23 @@
   - name: install composer pt1
     command: php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
     args:
-      chdir: /home/vagrant/
+      chdir: /tmp/
 
   - name: install composer pt2
     command: php composer-setup.php
     args:
-      chdir: /home/vagrant/
+      chdir: /tmp/
 
   - name: install composer pt3
     become: yes
     command: mv composer.phar /usr/bin/composer
     args:
-      chdir: /home/vagrant/
+      chdir: /tmp/
 
   - name: install composer pt4
     command: php -r "unlink('composer-setup.php');"
     args:
-      chdir: /home/vagrant/
+      chdir: /tmp/
 
   - name: get drush executable
     become: yes
@@ -114,16 +133,6 @@
       path: /var/www/html/web/sites/default/settings.php
       block: "{{ lookup('file', 'confs/drupal/settings.php') }}"
 
-
-  # - name: replace php.ini with dev version
-  #   become: yes
-  #   copy:
-  #     src: confs/drupal/php.ini-development
-  #     dest: /usr/share/doc/php-common-7.3.10/php.ini
-  #     owner: root
-  #     group: root
-  #     mode: "0644"
-
   - name: install apache httpd
     become: yes
     yum:
@@ -133,7 +142,7 @@
   - name: inject our httpd config file
     become: yes
     copy:
-      src: confs/our_httpd.conf
+      src: confs/httpd/httpd.conf
       dest: /etc/httpd/conf/httpd.conf
       owner: root
       group: root
@@ -166,8 +175,7 @@
     file:
       path: /var/www/html/drupal_salt.txt
       owner: apache
-      group: apache 
-
+      group: apache
 
   - name: install a MariaDB
     become: yes
@@ -183,3 +191,13 @@
       state: started
 
 
+ # - hosts: drupal8dev
+ #   tasks:
+ #  - name: replace php.ini with dev version
+ #    become: yes
+ #    copy:
+ #      src: confs/drupal/php.ini-development
+ #      dest: /usr/share/doc/php-common-7.3.10/php.ini
+ #      owner: root
+ #      group: root
+ #      mode: "0644"

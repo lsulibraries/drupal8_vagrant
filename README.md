@@ -71,7 +71,7 @@ A vagrant box to match production
 
 # run one playbook against local box:
 
-  - ansible-playbook -i hosts.ini { playbook_filename }.yml
+  - ansible-playbook --limit="drupal8dev," { playbook_filename }.yml
 
 # run one playbook against production:
     
@@ -109,7 +109,7 @@ REMOTE = ip address or domain name of the remote system
 ```[drupal8dev]
 127.0.0.1 ansible_connection=local
 
-[drupal8prod]
+[drupal8staging]
 130.39.60.169   # libwebsitebackup001.lsu.edu```
 
 ##
@@ -126,4 +126,4 @@ REMOTE = ip address or domain name of the remote system
  - the "hosts" variable in the playbook.yaml names which group of servers listed in /etc/ansible/hosts to target
  - if your username is different on remote and local, use -u USERNAME flag.
  - if your playbook runs any commands as become sudo, you must add the --ask-become-pass flag.
- ```ansible-playbook {path/name.yaml} -u USERNAME --ask-become-pass```
+ ```ansible-playbook {path/name.yaml} -u USERNAME --ask-become-pass --limit="{HOSTNAME},"```
