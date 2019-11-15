@@ -1,5 +1,5 @@
 ---
-- hosts: drupal8prod
+- hosts: drupal8staging
   tasks:
 
   - name: update all installed programs
