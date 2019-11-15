@@ -1,4 +1,4 @@
-# Dev box portion:
+# Making a Dev box:
 
 ### install dependencies:
   
@@ -28,7 +28,7 @@
   - Setting these permissions is necessary after pulling any new files from github (git does not preserve user:group for good reasons).
 
 
-# Production box portion
+# Making a Production box:
 
 ### add your ssh public key to the remote server
 
@@ -61,7 +61,8 @@
 127.0.0.1 ansible_connection=local
 
 [drupal8staging]
-130.39.60.169   # libwebsitebackup001.lsu.edu```
+130.39.60.169   # libwebsitebackup001.lsu.edu
+```
 
 #### check connection
 
@@ -69,8 +70,7 @@
  - ```ansible all -m ping -u USERNAME```
  - or ```ansible drupal8staging -m ping -u USERNAME```
  - run a command on the remote computers
- - ```ansible all -u USERNAME -a "/bin/echo hello"
- 
+ - ```ansible all -u USERNAME -a "/bin/echo hello"```
 
 #### run one playbook
 
