@@ -95,6 +95,13 @@
     args:
       chdir: /tmp/
 
+  - name: set composer executable to root:root permissions
+    become: yes
+    file:
+      path: /usr/bin/composer
+      owner: root
+      group: root
+
   - name: get drush executable
     become: yes
     get_url:
@@ -102,26 +109,31 @@
       dest: /usr/bin/drush
       mode: "0755"
 
-  - name: make drupal8
+  - name: make drupal_site directory
     become: yes
-    command: composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html --stability dev --no-interaction --no-install
+    file:
+      path: /var/www/html/drupal_site
+      owner: vagrant
+      group: vagrant
+      state: directory
+
+  - name: make drupal8
+    command: composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html/drupal_site --stability dev --no-interaction --no-install
 
   - name: inject our composer config file
-    become: yes
     copy:
       src: confs/drupal/drupal_composer.json
-      dest: /var/www/html/composer.json
+      dest: /var/www/html/drupal_site/composer.json
 
   - name: build a drupal8
-    become: yes
     command: composer update
     args:
-      chdir: /var/www/html
+      chdir: /var/www/html/drupal_site
 
   - name: set drupal files to apache:apache permissions
     become: yes
     file:
-      path: /var/www/html/web
+      path: /var/www/html/drupal_site/web
       state: directory
       recurse: yes
       owner: apache
@@ -130,7 +142,7 @@
   - name: append our settings.php to settings.php
     become: yes
     blockinfile:
-      path: /var/www/html/web/sites/default/settings.php
+      path: /var/www/html/drupal_site/web/sites/default/settings.php
       block: "{{ lookup('file', 'confs/drupal/settings.php') }}"
 
   - name: install apache httpd
@@ -150,7 +162,7 @@
 
   - name: set SELinux permissions pt1
     become: yes
-    command: chcon -R -t httpd_sys_content_rw_t /var/www/html/web/sites/
+    command: chcon -R -t httpd_sys_content_rw_t /var/www/html/drupal_site/web/sites/
 
   - name: set SELinux permissions pt2
     become: yes
@@ -165,15 +177,15 @@
 
   - name: make a hash salt
     become: yes
-    shell: tr -d -c "a-zA-Z0-9" < /dev/urandom | head -c 75 > /var/www/html/drupal_salt.txt
+    shell: tr -d -c "a-zA-Z0-9" < /dev/urandom | head -c 75 > /var/www/html/drupal_site/drupal_salt.txt
     args:
       executable: /bin/bash
-      creates: /var/www/html/drupal_salt.txt
+      creates: /var/www/html/drupal_site/drupal_salt.txt
 
   - name: set drual_salt to apache:apache permissions
     become: yes
     file:
-      path: /var/www/html/drupal_salt.txt
+      path: /var/www/html/drupal_site/drupal_salt.txt
       owner: apache
       group: apache
 
