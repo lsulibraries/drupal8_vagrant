@@ -22,8 +22,8 @@
 
 ### Secure the database
 
-  ```vagrant ssh```
-  ```sudo mysql_secure_installation```
+  - ```vagrant ssh```
+  - ```sudo mysql_secure_installation```
   
   - root is the account with complete control over MariaDB & his password is very valuable.  Each box can have a different root password.
   - when asked, root initially has no password.
@@ -33,34 +33,36 @@
 
   - after securing the database above
 
+  - ```mysql -u root -p```  (use root password set above)
+
   - using the drupaluser password saved in ./playbooks/conf/drupal/settings.php:
 
-  ```mysql -u root -p```  (use root password set above)
+  - ```CREATE USER 'drupaluser'@'localhost' IDENTIFIED BY '{password}';```
 
-  ```CREATE USER 'drupaluser'@'localhost' IDENTIFIED BY '{password}';```
+  - ```CREATE DATABASE drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;```
 
-  ```CREATE DATABASE drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;```
+  - ```GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost' IDENTIFIED BY '{password}';```
 
-  ```GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost' IDENTIFIED BY '{password}';```
-
-  ```exit```
+  - ```exit```
 
 ### Import existing database
 
-  if your OS has mariadb <5.6: 
+  if ```mysql --version``` is earlier than 5.56-MariaDB, fix the encoding with: 
 
-  ```sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' drupal8_sandbox_db.sql```
+  - ```cd /vagrant```
+  - ```sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' drupal8_sandbox_db.sql```
 
   import:
 
-  ```cd /vagrant```
-  ```mysql -u root -p drupal < drupal8_sandbox_db.sql```
+  - ```cd /vagrant```
+  - ```mysql -u root -p drupal < drupal8_sandbox_db.sql```
 
 ### Add our drupal_sync
 
   - ```cd /var/www/html/drupal_site/```
   - next, we're git cloning as user apache
-  - ```sudo -u apache git clone https://github.com/lsulibraries/drupal_sync```
+  - ```sudo git clone https://github.com/lsulibraries/drupal_sync```
+  - ```sudo chown -R apache:apache drupal_sync```
 
 ### Sync the config settings
 
@@ -77,6 +79,9 @@
     - We also rename the folder from "drupal8_theme" to "contrib", in order to make drupal happy.  The rename is shallow & we can still git push & pull from "contrib" folder to the github "drupal8_theme" repo.
   - ```sudo -u apache git clone https://github.com/lsulibraries/drupal8_theme contrib/```
 
+### Restart apache httpd
+
+  - ```sudo systemctl restart httpd```
 
 # Maintenance
 
