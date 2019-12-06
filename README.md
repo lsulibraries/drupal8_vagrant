@@ -176,7 +176,7 @@
 
 ### Secure the database
 
-  - ```vagrant ssh```
+  - ssh to remote
   - ```sudo mysql_secure_installation```
   
   - root is the account with complete control over MariaDB & his password is very valuable.  Each box can have a different root password.
@@ -203,35 +203,34 @@
 
   if ```mysql --version``` is earlier than 5.56-MariaDB, fix the encoding with: 
 
-  - ```cd /vagrant```
+  - rsync the drupal8_sandbox_db.sql file to remote
   - ```sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' drupal8_sandbox_db.sql```
 
   import:
 
-  - ```cd /vagrant```
+  - rsync the drupal8_sandbox_db.sql file to remote
   - ```mysql -u root -p drupal < drupal8_sandbox_db.sql```
 
 ### Add our drupal_sync
 
   - ```cd /var/www/html/drupal_site/```
-  - next, we're git cloning as user apache
   - ```sudo git clone https://github.com/lsulibraries/drupal_sync```
   - ```sudo chown -R apache:apache drupal_sync```
 
-### Sync the config settings
-
-  - ```cd /var/www/html/drupal_site/```
-  - ```drush config-import -y```
-
 ### Add our drupal8_theme
 
-  - ```vagrant ssh```
   - ```cd /var/www/html/drupal_site/web/themes/```
   - ```sudo rm -R contrib/```
   - the next step is complicated
     - We run the command as the user "apache", so that the permissions get assigned to "apache".  
     - We also rename the folder from "drupal8_theme" to "contrib", in order to make drupal happy.  The rename is shallow & we can still git push & pull from "contrib" folder to the github "drupal8_theme" repo.
   - ```sudo -u apache git clone https://github.com/lsulibraries/drupal8_theme contrib/```
+
+### Sync the config settings
+
+  - ```cd /var/www/html/drupal_site/```
+  - ```drush config-import -y```
+
 
 ### Restart apache httpd
 
