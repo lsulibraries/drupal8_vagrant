@@ -136,7 +136,8 @@
 
  - add the following text to /etc/ansible/hosts
 
-```[drupal8dev]
+```
+[drupal8dev]
 127.0.0.1 ansible_connection=local
 
 [drupal8staging]
