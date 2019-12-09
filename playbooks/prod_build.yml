@@ -1,0 +1,233 @@
+---
+- hosts: all
+  tasks:
+
+  - name: start firewalld
+    become: yes
+    shell: systemctl start firewalld.service
+
+  - name: open firewall to http
+    become: yes
+    firewalld:
+       service: http
+       state: enabled
+       permanent: yes
+
+  - name: open firewall to https
+    become: yes
+    firewalld:
+      service: https
+      immediate: yes
+      permanent: yes
+      state: enabled
+
+  - name: update all installed programs
+    become: yes
+    yum:
+      name: "*"
+      update_cache: yes
+      state: latest
+
+  - name: install programs necessary for remi repo
+    become: yes
+    yum:
+      name: "{{ item }}"
+      update_cache: yes
+      state: latest
+    with_items:
+      - epel-release
+      - yum-utils
+      - git
+
+  - name: Import remi GPG key.
+    become: yes
+    rpm_key:
+      key: http://rpms.remirepo.net/RPM-GPG-KEY-remi
+
+  - name: fetch remi php repository
+    become: yes
+    yum:
+      name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+
+  - name: enable remi php repository
+    become: yes
+    shell: yum-config-manager --enable remi-php73
+
+  - name: install php7
+    become: yes
+    yum:
+      name: "{{ item }}"
+      update_cache: yes
+      state: latest
+      enablerepo: "remi-php73"
+    timeout: 120
+    with_items:
+      - php
+      - php-opcache
+      - php-mcrypt
+      - php-gd
+      - php-mysql
+      - php-ldap
+      - php-zip
+      - php-mbstring
+      - php-xml
+      - php-pear
+      - php-fpm
+
+  - name: install composer pt1
+    command: php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    args:
+      chdir: /tmp/
+
+  - name: install composer pt2
+    command: php composer-setup.php
+    args:
+      chdir: /tmp/
+
+  - name: install composer pt3
+    become: yes
+    command: mv composer.phar /usr/bin/composer
+    args:
+      chdir: /tmp/
+
+  - name: install composer pt4
+    command: php -r "unlink('composer-setup.php');"
+    args:
+      chdir: /tmp/
+
+  - name: set composer executable to root:root permissions
+    become: yes
+    file:
+      path: /usr/bin/composer
+      owner: root
+      group: root
+
+  - name: get drush executable
+    become: yes
+    get_url:
+      url: https://github.com/drush-ops/drush-launcher/releases/download/0.6.0/drush.phar
+      dest: /usr/bin/drush
+      mode: "0755"
+
+- hosts: drupal8dev
+  tasks: 
+
+  - name: make drupal_site directory
+    become: yes
+    file:
+      path: /var/www/html/drupal_site
+      owner: vagrant
+      group: vagrant
+      state: directory
+
+- hosts: drupal8staging
+  tasks:
+
+  - name: make drupal_site directory
+    become: yes
+    file:
+      path: /var/www/html/drupal_site
+      state: directory
+      owner: garmstrong
+      group: garmstrong
+      # or whoever you are running the ansible command as
+
+- hosts: all
+  tasks:
+
+  - name: make drupal8
+    command: composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html/drupal_site --stability dev --no-interaction --no-install
+
+  - name: inject our composer config file
+    copy:
+      src: confs/drupal/drupal_composer.json
+      dest: /var/www/html/drupal_site/composer.json
+
+  - name: build a drupal8
+    command: composer update
+    args:
+      chdir: /var/www/html/drupal_site
+
+  - name: set drupal files to apache:apache permissions
+    become: yes
+    file:
+      path: /var/www/html/drupal_site/web
+      state: directory
+      recurse: yes
+      owner: apache
+      group: apache
+
+  - name: append our settings.php to settings.php
+    become: yes
+    blockinfile:
+      path: /var/www/html/drupal_site/web/sites/default/settings.php
+      block: "{{ lookup('file', 'confs/drupal/settings.php') }}"
+
+  - name: install apache httpd
+    become: yes
+    yum:
+      name: httpd
+      state: latest
+
+  - name: inject our httpd config file
+    become: yes
+    copy:
+      src: confs/httpd/httpd.conf
+      dest: /etc/httpd/conf/httpd.conf
+      owner: root
+      group: root
+      mode: "0644"
+
+  - name: set SELinux permissions pt1
+    become: yes
+    command: chcon -R -t httpd_sys_content_rw_t /var/www/html/drupal_site/web/sites/
+
+  - name: set SELinux permissions pt2
+    become: yes
+    command: setsebool httpd_can_network_connect_db=on
+
+  - name: start apache
+    become: yes
+    service:
+      name: httpd
+      enabled: yes
+      state: restarted
+
+  - name: make a hash salt
+    become: yes
+    shell: tr -d -c "a-zA-Z0-9" < /dev/urandom | head -c 75 > /var/www/html/drupal_site/drupal_salt.txt
+    args:
+      executable: /bin/bash
+      creates: /var/www/html/drupal_site/drupal_salt.txt
+
+  - name: set drual_salt to apache:apache permissions
+    become: yes
+    file:
+      path: /var/www/html/drupal_site/drupal_salt.txt
+      owner: apache
+      group: apache
+
+  - name: install a MariaDB
+    become: yes
+    yum: 
+      name: mariadb-server
+      state: latest
+
+  - name: Start MariaDB Server and enable it
+    become: yes
+    service: 
+      name: mariadb
+      enabled: yes      
+      state: started
+
+- hosts: drupal8dev
+  tasks:
+
+  - name: replace php.ini with dev version
+    become: yes
+    copy:
+      src: confs/drupal/php.ini-development
+      dest: /usr/share/doc/php-common-7.3.10/php.ini
+      owner: root
+      group: root
+      mode: "0644"
