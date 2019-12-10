@@ -83,7 +83,7 @@
 
   - ```sudo systemctl restart httpd```
 
-# Maintenance
+# Version control theme or config settings
 
 ### Version control of theme or sync
 
@@ -171,7 +171,7 @@
  - if your username is different on remote and local, use -u USERNAME flag.  USERNAME is an existing user on the remote server.
  - if your playbook runs any commands as become sudo, you must add the --ask-become-pass flag.
 
- ```ansible-playbook playbooks/build.yaml} -u USERNAME --ask-become-pass --limit="drupal8staging,"```
+ ```ansible-playbook playbooks/prod_build.yaml} -u USERNAME --ask-become-pass --limit="drupal8staging,"```
 
 ## manual steps
 
@@ -202,14 +202,14 @@
 
 ### Import existing database
 
-  if ```mysql --version``` is earlier than 5.56-MariaDB, fix the encoding with: 
-
   - rsync the drupal8_sandbox_db.sql file to remote
+  - ```rsync -avz desktopuser@130.39.61.01:/home/desktopuser/Desktop/lsugit/drupal8_vagrant/drupal8_sandbox_db.sql ~```
+
+  if ```mysql --version``` is earlier than 5.56-MariaDB, fix the encoding with: 
   - ```sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' drupal8_sandbox_db.sql```
 
   import:
 
-  - rsync the drupal8_sandbox_db.sql file to remote
   - ```mysql -u root -p drupal < drupal8_sandbox_db.sql```
 
 ### Add our drupal_sync

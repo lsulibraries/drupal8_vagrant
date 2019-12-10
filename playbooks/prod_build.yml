@@ -10,6 +10,7 @@
     become: yes
     firewalld:
        service: http
+       immediate: yes
        state: enabled
        permanent: yes
 
@@ -102,26 +103,12 @@
       owner: root
       group: root
 
-  - name: get drush executable
+  - name: get drush-launcher executable
     become: yes
     get_url:
       url: https://github.com/drush-ops/drush-launcher/releases/download/0.6.0/drush.phar
       dest: /usr/bin/drush
       mode: "0755"
-
-- hosts: drupal8dev
-  tasks: 
-
-  - name: make drupal_site directory
-    become: yes
-    file:
-      path: /var/www/html/drupal_site
-      owner: vagrant
-      group: vagrant
-      state: directory
-
-- hosts: drupal8staging
-  tasks:
 
   - name: make drupal_site directory
     become: yes
@@ -130,10 +117,7 @@
       state: directory
       owner: garmstrong
       group: garmstrong
-      # or whoever you are running the ansible command as
-
-- hosts: all
-  tasks:
+      # or whomever you are running the ansible command as
 
   - name: make drupal8
     command: composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html/drupal_site --stability dev --no-interaction --no-install
@@ -147,6 +131,7 @@
     command: composer update
     args:
       chdir: /var/www/html/drupal_site
+    # if this step crashes due to memory-limits, temporarily edit /etc/php.ini to memory_limit = -1
 
   - name: set drupal files to apache:apache permissions
     become: yes
@@ -220,14 +205,14 @@
       enabled: yes      
       state: started
 
-- hosts: drupal8dev
-  tasks:
+# - hosts: drupal8dev
+#   tasks:
 
-  - name: replace php.ini with dev version
-    become: yes
-    copy:
-      src: confs/drupal/php.ini-development
-      dest: /usr/share/doc/php-common-7.3.10/php.ini
-      owner: root
-      group: root
-      mode: "0644"
+#   - name: replace php.ini with dev version
+#     become: yes
+#     copy:
+#       src: confs/drupal/php.ini-development
+#       dest: /usr/share/doc/php-common-7.3.10/php.ini
+#       owner: root
+#       group: root
+#       mode: "0644"
