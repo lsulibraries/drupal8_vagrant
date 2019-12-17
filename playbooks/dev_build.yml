@@ -10,6 +10,7 @@
     become: yes
     firewalld:
        service: http
+       immediate: yes
        state: enabled
        permanent: yes
 
@@ -113,9 +114,10 @@
     become: yes
     file:
       path: /var/www/html/drupal_site
+      state: directory
       owner: vagrant
       group: vagrant
-      state: directory
+
 
   - name: make drupal8
     command: composer create-project drupal-composer/drupal-project:8.x-dev /var/www/html/drupal_site --stability dev --no-interaction --no-install

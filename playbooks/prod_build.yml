@@ -205,13 +205,10 @@
       enabled: yes      
       state: started
 
-# - hosts: drupal8dev
-#   tasks:
-
-#   - name: replace php.ini with dev version
+#   - name: replace php.ini with production version
 #     become: yes
 #     copy:
-#       src: confs/drupal/php.ini-development
+#       src: confs/drupal/php.ini-production
 #       dest: /usr/share/doc/php-common-7.3.10/php.ini
 #       owner: root
 #       group: root
