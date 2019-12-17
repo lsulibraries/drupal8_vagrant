@@ -206,9 +206,6 @@
       enabled: yes      
       state: started
 
-# - hosts: drupal8dev
-#   tasks:
-
 #   - name: replace php.ini with dev version
 #     become: yes
 #     copy:
