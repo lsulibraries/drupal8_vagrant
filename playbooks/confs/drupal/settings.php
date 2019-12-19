@@ -1,7 +1,8 @@
 
 $settings['hash_salt'] = file_get_contents('/var/www/html/drupal_site/drupal_salt.txt');
 
-$config_directories['sync'] = '/var/www/html/drupal_site/drupal_sync/';
+$settings['config_sync_directory'] = '../drupal_sync';
+
 
 $databases['default']['default'] = array (
   'database' => "drupal",

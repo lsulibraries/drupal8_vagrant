@@ -49,6 +49,7 @@
 
   if ```mysql --version``` is earlier than 5.56-MariaDB, fix the encoding with: 
 
+  - while still in the vagrant box
   - ```cd /vagrant```
   - ```sed -i 's/utf8mb4_0900_ai_ci/utf8mb4_unicode_ci/g' drupal8_sandbox_db.sql```
 
@@ -56,11 +57,13 @@
 
   - ```cd /vagrant```
   - ```mysql -u root -p drupal < drupal8_sandbox_db.sql```
+  - using the new root password
 
 ### Add our drupal_sync
 
+  - while in the vagrant box
   - ```cd /var/www/html/drupal_site/```
-  - next, we're git cloning as user apache
+  - next, we're git cloning and setting user apache permissions
   - ```sudo git clone https://github.com/lsulibraries/drupal_sync```
   - ```sudo chown -R apache:apache drupal_sync```
 
@@ -82,6 +85,10 @@
 ### Restart apache httpd
 
   - ```sudo systemctl restart httpd```
+
+### Browser interface opened
+
+  - localhost:8080
 
 # Version control theme or config settings
 
@@ -141,7 +148,7 @@
 127.0.0.1 ansible_connection=local
 
 [drupal8staging]
-130.39.60.169   # libwebsitebackup001.lsu.edu
+96.125.26.116   # libwebsitebackup001.lsu.edu
 ```
 
 #### check connection
