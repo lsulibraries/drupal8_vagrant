@@ -1,0 +1,20 @@
+---
+- hosts: all
+  tasks:
+
+  - name: inject our composer config file
+    copy:
+      src: confs/drupal/drupal_composer.json
+      dest: /var/www/html/drupal_site/composer.json
+
+  - name: run composer update
+    command: composer update
+    args:
+      chdir: /var/www/html/drupal_site
+
+  - name: restart apache httpd
+    become: yes
+    service:
+      name: httpd
+      enabled: yes
+      state: restarted
