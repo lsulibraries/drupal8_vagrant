@@ -1,3 +1,5 @@
 # gitignore these
 .vagrant
 *.retry
+drupal8_sandbox_db.sql
+drupal8_theme

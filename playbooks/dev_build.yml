@@ -61,7 +61,7 @@
       update_cache: yes
       state: latest
       enablerepo: "remi-php73"
-    timeout: 120
+    # timeout: 120
     with_items:
       - php
       - php-opcache
@@ -164,13 +164,9 @@
       group: root
       mode: "0644"
 
-  - name: set SELinux permissions pt1
+  - name: Disable sel enforce
     become: yes
-    command: chcon -R -t httpd_sys_content_rw_t /var/www/html/drupal_site/web/sites/
-
-  - name: set SELinux permissions pt2
-    become: yes
-    command: setsebool httpd_can_network_connect_db=on
+    command: setenforce 0
 
   - name: start apache
     become: yes
@@ -186,7 +182,7 @@
       executable: /bin/bash
       creates: /var/www/html/drupal_site/drupal_salt.txt
 
-  - name: set drual_salt to apache:apache permissions
+  - name: set drupal_salt to apache:apache permissions
     become: yes
     file:
       path: /var/www/html/drupal_site/drupal_salt.txt

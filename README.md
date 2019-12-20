@@ -9,6 +9,17 @@
   - ```git clone https://github.com/lsulibraries/drupal8_vagrant```
   - ```cd drupal8_vagrant```
 
+### Copy in the sqldump
+
+  - from R:/TechInit/Drupal8DbAuthoritative/drupal8_sandbox_db.sql
+  - copy inside the drupal8_vagrant folder
+  - This file is the authoritative version of the drupal8 db that we'll be build up into the production database.
+
+### Add our drupal8_theme
+
+  - in your local drupal8_vagrant
+  - ```git clone https://github.com/lsulibraries/drupal8_theme```
+
 ### Change the drupaluser db password
 
   - drupaluser is the account drupal will use to connect to MariaDB.  His password is valuable.  Each box can have a different drupaluser password.
@@ -18,7 +29,6 @@
 ### Build a dev box
 
   - ```vagrant up --provision```
-  - localhost:8080 when finished all the following steps
 
 ### Secure the database
 
@@ -67,20 +77,17 @@
   - ```sudo git clone https://github.com/lsulibraries/drupal_sync```
   - ```sudo chown -R apache:apache drupal_sync```
 
+### Replace theme/contrib with our symlinked repo
+
+  - ```cd /var/www/html/drupal_site/web/themes/```
+  - ```sudo rm -rf contrib```
+  - ```ln -s /vagrant/drupal8_theme contrib```
+
 ### Sync the config settings
 
   - ```cd /var/www/html/drupal_site/```
   - ```drush config-import -y```
 
-### Add our drupal8_theme
-
-  - ```vagrant ssh```
-  - ```cd /var/www/html/drupal_site/web/themes/```
-  - ```sudo rm -R contrib/```
-  - the next step is complicated
-    - We run the command as the user "apache", so that the permissions get assigned to "apache".  
-    - We also rename the folder from "drupal8_theme" to "contrib", in order to make drupal happy.  The rename is shallow & we can still git push & pull from "contrib" folder to the github "drupal8_theme" repo.
-  - ```sudo -u apache git clone https://github.com/lsulibraries/drupal8_theme contrib/```
 
 ### Restart apache httpd
 
@@ -89,6 +96,7 @@
 ### Browser interface opened
 
   - localhost:8080
+  - from outside box, ```vagrant rsync-auto```
 
 # Version control theme or config settings
 
