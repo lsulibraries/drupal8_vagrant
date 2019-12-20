@@ -91,7 +91,6 @@
   - ```cd /var/www/html/drupal_site/```
   - ```drush config-import -y```
 
-
 ### Restart apache httpd
 
   - ```sudo systemctl restart httpd```
@@ -110,15 +109,16 @@
 
 ### Version control of drupal_sync
 
-  - ```drush cex```
+
+  - ```drush cex``` exports the feature changes you made to the drupal database
+ 
+  An example:
+
+  - ```cd /var/www/html/drupal_site/drupal_sync```
   - ```git checkout -b feature/{feature_name}```
   - ```git add *```
   - ```git commit```
   - ```git push origin```
-
-  - git add/push/checkout/whatever from within the vagrant box, and from within the repo folders.  Those folders are:
-
-    - (drupal_sync)    /var/www/html/drupal_site/drupal_sync/  
 
   - git does not preserve user:group permissions for good reasons, so you may find yourself fixing permissions errors after a git pull
 
