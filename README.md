@@ -72,10 +72,13 @@
 ### Add our drupal_sync
 
   - while in the vagrant box
+  - ```git config --global user.name {username}```
+  - ```git config --global user.email {email}```
   - ```cd /var/www/html/drupal_site/```
   - next, we're git cloning and setting user apache permissions
   - ```sudo git clone https://github.com/lsulibraries/drupal_sync```
   - ```sudo chown -R apache:apache drupal_sync```
+  - ```sudo -u apache chmod -a a+w /var/www/html/drupal_site/drupal_sync```
 
 ### Replace theme/contrib with our symlinked repo
 
@@ -100,7 +103,18 @@
 
 # Version control theme or config settings
 
-### Version control of theme or sync
+### Version control of theme
+
+  - edit the drupal_theme repo on your outside box.  
+  - git commit from outside box
+
+### Version control of drupal_sync
+
+  - ```drush cex```
+  - ```git checkout -b feature/{feature_name}```
+  - ```git add *```
+  - ```git commit```
+  - ```git push origin```
 
   - git add/push/checkout/whatever from within the vagrant box, and from within the repo folders.  Those folders are:
 
