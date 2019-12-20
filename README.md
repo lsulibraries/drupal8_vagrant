@@ -51,7 +51,7 @@
 
   - ```CREATE DATABASE drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;```
 
-  - ```GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost' IDENTIFIED BY '{password}';```
+  - ```GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost';```
 
   - ```exit```
 
@@ -81,7 +81,7 @@
 
   - ```cd /var/www/html/drupal_site/web/themes/```
   - ```sudo rm -rf contrib```
-  - ```ln -s /vagrant/drupal8_theme contrib```
+  - ```sudo -u apache ln -s /vagrant/drupal8_theme contrib```
 
 ### Sync the config settings
 
@@ -105,9 +105,6 @@
   - git add/push/checkout/whatever from within the vagrant box, and from within the repo folders.  Those folders are:
 
     - (drupal_sync)    /var/www/html/drupal_site/drupal_sync/  
-    - (drupal8_theme)  /var/www/html/drupal_site/web/themes/contrib/  
-
-  - we're treating these folders as unrelated repos on dev and on production
 
   - git does not preserve user:group permissions for good reasons, so you may find yourself fixing permissions errors after a git pull
 
