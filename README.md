@@ -96,7 +96,7 @@
 ### Browser interface opened
 
   - localhost:8080
-  - from outside box, ```vagrant rsync-auto```
+  - for Windows: from outside box, ```vagrant rsync-auto```
 
 # Version control theme or config settings
 
