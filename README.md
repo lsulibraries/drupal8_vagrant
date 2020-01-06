@@ -167,7 +167,7 @@
 127.0.0.1 ansible_connection=local
 
 [drupal8staging]
-96.125.26.116   # libwebsitebackup001.lsu.edu
+96.125.26.115   # libwebtest.lsu.edu
 ```
 
 #### check connection
@@ -197,7 +197,7 @@
  - if your username is different on remote and local, use -u USERNAME flag.  USERNAME is an existing user on the remote server.
  - if your playbook runs any commands as become sudo, you must add the --ask-become-pass flag.
 
- ```ansible-playbook playbooks/prod_build.yaml} -u USERNAME --ask-become-pass --limit="drupal8staging,"```
+ ```ansible-playbook playbooks/prod_build.yaml -u USERNAME --ask-become-pass --limit="drupal8staging,"```
 
 ## manual steps
 

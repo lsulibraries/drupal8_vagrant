@@ -48,11 +48,11 @@
   - name: fetch remi php repository
     become: yes
     yum:
-      name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+      name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm
 
   - name: enable remi php repository
     become: yes
-    shell: yum-config-manager --enable remi-php73
+    shell: yum module --enable php:remi-74 -y
 
   - name: install php7
     become: yes
@@ -61,7 +61,6 @@
       update_cache: yes
       state: latest
       enablerepo: "remi-php73"
-    timeout: 120
     with_items:
       - php
       - php-opcache
@@ -115,8 +114,8 @@
     file:
       path: /var/www/html/drupal_site
       state: directory
-      owner: garmstrong
-      group: garmstrong
+      owner: wconli1
+      group: wconli1
       # or whomever you are running the ansible command as
 
   - name: make drupal8
