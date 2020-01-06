@@ -273,5 +273,5 @@
 
 # Misc
 
-  - using the php.ini-development would display php errors & var dumps onto the user's browser.  So I'm making this difficult to mess up by forcing us to manually move confs/drupal/php.ini-production to the production box's /etc/php.ini with root:root permissions.  NOTE:  Fix this later to do ansible commands based on which host(localhost vs production.)
+  - using the /usr/share/doc/php-common/php.ini-development would display php errors & var dumps onto the user's browser.  So I'm making this difficult to mess up by forcing us to manually move php.ini-production to the production box's /etc/php.ini with root:root permissions.  NOTE:  Fix this later to do ansible commands based on which host(localhost vs production.)
   - tbd
