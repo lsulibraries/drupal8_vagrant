@@ -184,7 +184,7 @@
       executable: /bin/bash
       creates: /var/www/html/drupal_site/drupal_salt.txt
 
-  - name: set drual_salt to apache:apache permissions
+  - name: set drupal_salt to apache:apache permissions
     become: yes
     file:
       path: /var/www/html/drupal_site/drupal_salt.txt
