@@ -78,7 +78,7 @@
   - next, we're git cloning and setting user apache permissions
   - ```sudo git clone https://github.com/lsulibraries/drupal_sync```
   - ```sudo chown -R apache:apache drupal_sync```
-  - ```sudo -u apache chmod -a a+w /var/www/html/drupal_site/drupal_sync```
+  - ```sudo -u apache chmod -R a+w /var/www/html/drupal_site/drupal_sync```
 
 ### Replace theme/contrib with our symlinked repo
 
