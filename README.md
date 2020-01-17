@@ -51,7 +51,7 @@
 
   - ```CREATE DATABASE drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;```
 
-  - ```GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost';```
+  - ```GRANT LOCK, SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost';```
 
   - ```exit```
 
@@ -121,6 +121,28 @@
   - ```git push origin```
 
   - git does not preserve user:group permissions for good reasons, so you may find yourself fixing permissions errors after a git pull
+
+### Drush sql:sync instructions for dev boxes
+
+  - creating site alias for staging or production systems
+  - ```cd /var/www/html/drupal_site/drush/sites```
+  - create a yml file for the server you wish to sync with
+  - ```nano staging.site.yml```
+  - ```staging:
+         host: libwebtest.lsu.edu
+         user: userWithAccessToServer
+         root: /var/www/html/drupal_site/web
+         uri: http://libwebtest.lsu.edu
+         ssh:
+           options: '-o PasswordAuthentication=no -i ~/path/to/rsa_kkey'```
+  - create an ssh key without a passcode
+  - ```ssh-keygen```
+  - follow the options for a key without a passcode
+  - copy the key to the production or staging server
+  - ```ssh-copy-id userWithAccessToServer@stagingServer.lsu.edu```
+  - with the above setup we can no sync databases from staging, or production to our local dev environments
+  - ```drush sql:sync @staging @self```
+
 
 ### Updating composer.json, drupal settings.php, httpd.conf
 
