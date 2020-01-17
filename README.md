@@ -126,21 +126,22 @@
 
   - creating site alias for staging or production systems
   - ```cd /var/www/html/drupal_site/drush/sites```
-  - create a yml file for the server you wish to sync with
+  - create a yml file for the server you wish to sync with, (sudo apt-get install nano) if you don't want to use vi
   - ```nano staging.site.yml```
   - ```staging:
-         host: libwebtest.lsu.edu
+         host: host_ip_or_url
          user: userWithAccessToServer
          root: /var/www/html/drupal_site/web
          uri: http://libwebtest.lsu.edu
          ssh:
-           options: '-o PasswordAuthentication=no -i ~/path/to/rsa_kkey'```
+           options: '-o PasswordAuthentication=no -i ~/path/to/rsa_key'
+     ```
   - create an ssh key without a passcode
   - ```ssh-keygen```
   - follow the options for a key without a passcode
   - copy the key to the production or staging server
   - ```ssh-copy-id userWithAccessToServer@stagingServer.lsu.edu```
-  - with the above setup we can no sync databases from staging, or production to our local dev environments
+  - with the above setup we can now sync databases from staging, or production to our local dev environments
   - ```drush sql:sync @staging @self```
 
 
