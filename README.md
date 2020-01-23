@@ -137,7 +137,7 @@
          root: /var/www/html/drupal_site/web
          uri: http://libwebtest.lsu.edu
          ssh:
-           options: '-o PasswordAuthentication=no -i ~/path/to/rsa_key'
+           options: '-o PasswordAuthentication=no -i ~/.ssh/id_rsa'
      ```
   - create an ssh key without a passcode
   - ```ssh-keygen```
