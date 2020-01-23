@@ -58,7 +58,7 @@
 
   - ```exit```
 
-### Import existing database
+### Import existing database (Skip if using drush sql:sync)
 
   if ```mysql --version``` is earlier than 5.56-MariaDB, fix the encoding with: 
 
