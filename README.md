@@ -89,7 +89,7 @@
   - ```sudo rm -rf contrib```
   - ```sudo -u apache ln -s /vagrant/drupal8_theme contrib```
 
-### Sync the config settings
+### Sync the config settings (Optional skip to sql:sync)
 
   - ```cd /var/www/html/drupal_site/```
   - ```drush config-import -y```
