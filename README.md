@@ -129,7 +129,7 @@
 
   - creating site alias for staging or production systems
   - ```cd /var/www/html/drupal_site/drush/sites```
-  - create a yml file for the server you wish to sync with, (sudo apt-get install nano) if you don't want to use vi
+  - create a yml file for the server you wish to sync with, (sudo yum install nano) if you don't want to use vi
   - ```nano staging.site.yml```
   - ```staging:
          host: host_ip_or_url
