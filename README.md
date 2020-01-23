@@ -50,8 +50,11 @@
   - ```CREATE USER 'drupaluser'@'localhost' IDENTIFIED BY '{password}';```
 
   - ```CREATE DATABASE drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;```
+  
+  - ```GRANT LOCK TABLES ON *.* TO 'drupaluser'@'localhost';```
+ 
 
-  - ```GRANT LOCK, SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost';```
+  - ```GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost';```
 
   - ```exit```
 
