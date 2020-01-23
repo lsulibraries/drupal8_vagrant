@@ -131,7 +131,8 @@
   - ```cd /var/www/html/drupal_site/drush/sites```
   - create a yml file for the server you wish to sync with, (sudo yum install nano) if you don't want to use vi
   - ```nano staging.site.yml```
-  - ```staging:
+  - ```
+    staging:
          host: host_ip_or_url
          user: userWithAccessToServer
          root: /var/www/html/drupal_site/web
