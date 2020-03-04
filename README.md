@@ -50,6 +50,9 @@
   - ```CREATE USER 'drupaluser'@'localhost' IDENTIFIED BY '{password}';```
 
   - ```CREATE DATABASE drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;```
+  
+  - ```GRANT LOCK TABLES ON *.* TO 'drupaluser'@'localhost';```
+ 
 
   - ```GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupaluser'@'localhost';```
 
@@ -86,7 +89,7 @@
   - ```sudo rm -rf contrib```
   - ```sudo -u apache ln -s /vagrant/drupal8_theme contrib```
 
-### Sync the config settings
+### Sync the config settings (Optional skip to sql:sync)
 
   - ```cd /var/www/html/drupal_site/```
   - ```drush config-import -y```
@@ -121,6 +124,30 @@
   - ```git push origin```
 
   - git does not preserve user:group permissions for good reasons, so you may find yourself fixing permissions errors after a git pull
+
+### Drush sql:sync instructions for dev boxes
+
+  - creating site alias for staging or production systems
+  - ```cd /var/www/html/drupal_site/drush/sites```
+  - create a yml file for the server you wish to sync with, (sudo yum install nano) if you don't want to use vi
+  - ```nano staging.site.yml```
+  - ```
+    staging:
+         host: host_ip_or_url
+         user: userWithAccessToServer
+         root: /var/www/html/drupal_site/web
+         uri: http://libwebtest.lsu.edu
+         ssh:
+           options: '-o PasswordAuthentication=no -i ~/.ssh/id_rsa'
+     ```
+  - create an ssh key without a passcode
+  - ```ssh-keygen```
+  - follow the options for a key without a passcode
+  - copy the key to the production or staging server
+  - ```ssh-copy-id userWithAccessToServer@stagingServer.lsu.edu```
+  - with the above setup we can now sync databases from staging, or production to our local dev environments
+  - ```drush sql:sync @staging @self```
+
 
 ### Updating composer.json, drupal settings.php, httpd.conf
 
