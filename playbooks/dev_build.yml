@@ -131,6 +131,7 @@
 
   - name: build a drupal8
     command: composer update
+    # command: php -d memory_limit=-1 /bin/composer update
     args:
       chdir: /var/www/html/drupal_site
 
