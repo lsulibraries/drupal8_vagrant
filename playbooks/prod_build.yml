@@ -80,7 +80,7 @@
       chdir: /tmp/
 
   - name: install composer pt2
-    command: php composer-setup.php
+    command: php composer-setup.php --version 1.9.1
     args:
       chdir: /tmp/
 
@@ -114,8 +114,8 @@
     file:
       path: /var/www/html/drupal_site
       state: directory
-      owner: wconli1
-      group: wconli1
+      owner: apache
+      group: apache
       # or whomever you are running the ansible command as
 
   - name: make drupal8

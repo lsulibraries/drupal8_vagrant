@@ -81,7 +81,7 @@
       chdir: /tmp/
 
   - name: install composer pt2
-    command: php composer-setup.php
+    command: php composer-setup.php --version 1.9.1
     args:
       chdir: /tmp/
 
@@ -130,8 +130,8 @@
       dest: /var/www/html/drupal_site/composer.json
 
   - name: build a drupal8
-    command: composer update
-    # command: php -d memory_limit=-1 /bin/composer update
+#    command: composer update
+    command: php -d memory_limit=-1 /bin/composer update --version 1.9.1
     args:
       chdir: /var/www/html/drupal_site
 
