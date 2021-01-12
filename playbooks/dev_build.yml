@@ -210,6 +210,42 @@
       enabled: yes      
       state: started
 
+
+  - name: mysql_root_password
+     mysql_user:
+      login_user: root
+      login_password: ""
+      user: root
+      check_implicit_admin: true
+      password: "<generate_yourown>"
+      host: localhost
+
+   - name: remove remote root
+     mysql_user:
+      check_implicit_admin: true
+      login_user: root
+      login_password: "<generate_yourown>"
+      user: root
+      host: localhost
+      state: absent
+
+   - name: add drupaluser
+     mysql_user:
+      name: drupaluser
+      password: hidrupal
+      priv: "drupal:ALL"
+      state: present
+      host: localhost
+#  - name: create drupal db
+#    mysql_db:
+#        name: drupal
+        # charset uft-8 etc... look up documentation
+        # GRANT Lock Tables? is priv drupal:all same as GRANT SELECT ETC?
+
+# is it possible to add drupal_sync steps to the playbook?
+# my guess would be yes.
+
+
 #   - name: replace php.ini with dev version
 #     become: yes
 #     copy:
