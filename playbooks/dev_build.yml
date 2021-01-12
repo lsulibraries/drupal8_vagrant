@@ -147,15 +147,15 @@
   - name: append our settings.php to settings.php
     become: yes
 #old way (syntax not working on ubuntu with anaconda, see syntax on lookup())
-    blockinfile:
-      path: /var/www/html/drupal_site/web/sites/default/settings.php
-      block: "{{ lookup('file', 'confs/drupal/settings.php') }}"
-#    copy:
-#      src: confs/drupal/settings.php
-#      dest: /var/www/html/drupal_site/web/sites/default/
-#      owner: root
-#      group: root
-#      mode: 0660
+#    blockinfile:
+#      path: /var/www/html/drupal_site/web/sites/default/settings.php
+#      block: "{{ lookup('file', 'confs/drupal/settings.php') }}"
+    copy:
+      src: confs/drupal/settings.php
+      dest: /var/www/html/drupal_site/web/sites/default/
+      owner: root
+      group: root
+      mode: 0660
 
   - name: install apache httpd
     become: yes
