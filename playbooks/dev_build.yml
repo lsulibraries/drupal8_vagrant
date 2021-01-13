@@ -110,6 +110,15 @@
       dest: /usr/bin/drush
       mode: "0755"
 
+#if condition if /var/www/html/drupal_site is full (because this is being re-run)
+# rm -rf /var/www/html/drupal_site may not be here, let's check
+
+  - name: delete if drupal_site exists
+    become: yes
+    file:
+      state: absent
+      path: /var/www/html/drupal_site
+
   - name: make drupal_site directory
     become: yes
     file:
@@ -210,36 +219,44 @@
       enabled: yes      
       state: started
 
+  - name: Adds Python MySQL support on RedHat/CentOS
+    become: yes
+    yum: name=MySQL-python state=present
+    when: ansible_os_family == 'RedHat'
 
-  - name: mysql_root_password
-     mysql_user:
+  - name: mysql root password
+    mysql_db:
+      check_implicit_admin: yes
       login_user: root
       login_password: ""
-      user: root
-      check_implicit_admin: true
-      password: "<generate_yourown>"
-      host: localhost
+      state: present
 
-   - name: remove remote root
-     mysql_user:
-      check_implicit_admin: true
-      login_user: root
-      login_password: "<generate_yourown>"
-      user: root
-      host: localhost
-      state: absent
+  - name: create drupal db
+    mysql_db:
+      name: drupal
+      enchoding: utf8
+      state: present
 
-   - name: add drupaluser
-     mysql_user:
+  - name: add drupaluser
+    mysql_user:
       name: drupaluser
       password: hidrupal
       priv: "drupal:ALL"
       state: present
       host: localhost
-#  - name: create drupal db
-#    mysql_db:
-#        name: drupal
-        # charset uft-8 etc... look up documentation
+
+  - name: remove remote root
+    mysql_user:
+      check_implicit_admin: true
+      login_user: root
+      login_password: "<~~%%generate_yourown>"
+      user: root
+      host: localhost
+      state: absent
+
+
+
+       # charset uft-8 etc... look up documentation
         # GRANT Lock Tables? is priv drupal:all same as GRANT SELECT ETC?
 
 # is it possible to add drupal_sync steps to the playbook?
