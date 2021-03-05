@@ -224,35 +224,48 @@
     yum: name=MySQL-python state=present
     when: ansible_os_family == 'RedHat'
 
-  - name: mysql root password
-    mysql_db:
-      check_implicit_admin: yes
-      login_user: root
-      login_password: ""
-      state: present
+    #if the database already exisits this won't run with indempotence. make it conditional, or something...
 
-  - name: create drupal db
-    mysql_db:
-      name: drupal
-      enchoding: utf8
-      state: present
+  - name: Set the root password 
+    mysql_user: login_user=root login_password="" user=root password="makeitso"
+
+  - name: Secure the root user for IPV6 localhost (::1)
+    mysql_user: login_user=root login_password="makeitso" user=root  host="::1"
+
+  - name: Secure the root user for IPV4 localhost (127.0.0.1)
+    mysql_user: login_user=root login_password="makeitso" user=root host="127.0.0.1"
+
+  - name: Secure the root user for localhost domain
+    mysql_user: login_user=root login_password="makeitso" user=root host="localhost"
+
+  # this step would be run in the production playbook.
+  #- name: Secure the root user for server_hostname domain
+  #  mysql_user: login_user=root login_password="makeitso" user=root password="makeitso" host="{{ ansible_fqdn }}"
+
+  - name: Deletes anonymous server user
+    mysql_user: login_user=root login_password="makeitso" user="" host_all=yes state=absent
+
+  - name: Removes the test database
+    mysql_db: login_user=root login_password="makeitso" db=test state=absent
 
   - name: add drupaluser
     mysql_user:
+      login_user: root
+      login_password: "makeitso"
       name: drupaluser
       password: hidrupal
-      priv: "drupal:ALL"
+      priv: "drupal.*:ALL,GRANT"
       state: present
       host: localhost
 
-  - name: remove remote root
-    mysql_user:
-      check_implicit_admin: true
+  - name: create drupal db
+    become: yes
+    mysql_db:
       login_user: root
-      login_password: "<~~%%generate_yourown>"
-      user: root
-      host: localhost
-      state: absent
+      login_password: "makeitso"
+      name: drupal
+      encoding: utf8
+      state: present
 
 
 
