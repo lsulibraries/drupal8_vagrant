@@ -29,6 +29,15 @@
       update_cache: yes
       state: latest
 
+  - name: install programs necessary for VirtualBox
+    become: yes
+    yum:
+      name: "{{ item }}"
+      update_cache: yes
+      state: latest
+    with_items:
+      - elfutils-libelf-devel
+
   - name: install programs necessary for remi repo
     become: yes
     yum:
@@ -48,20 +57,19 @@
   - name: fetch remi php repository
     become: yes
     yum:
-      name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+      name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm
 
   - name: enable remi php repository
     become: yes
-    shell: yum-config-manager --enable remi-php73
+    shell: dnf module enable php:remi-7.4 -y
 
   - name: install php7
     become: yes
-    yum:
+    dnf:
       name: "{{ item }}"
       update_cache: yes
       state: latest
-      enablerepo: "remi-php73"
-    # timeout: 120
+      enablerepo: "remi-php74"
     with_items:
       - php
       - php-opcache
